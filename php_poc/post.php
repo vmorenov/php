@@ -12,13 +12,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
 {
     if (isset($_GET['id']))
     {
+      header('Content-Type: application/json; charset=utf-8');
+      header("HTTP/1.1 200 OK");
+      $objeto = new StdClass;
       //Mostrar un post
       $sql = $dbConn->prepare("SELECT * FROM posts where id=:id");
       $sql->bindValue(':id', $_GET['id']);
       $sql->execute();
-      header("HTTP/1.1 200 OK");
-      header('Content-Type: application/json; charset=utf-8');
-      echo json_encode(  $sql->fetch(PDO::FETCH_ASSOC)  );
+      
+      
+      if ($sql -> rowCount() > 0){
+        echo 'suprecionPost_RSP{'.json_encode(  $sql->fetch(PDO::FETCH_ASSOC)  );
+      }
+      else{       
+        
+        $objeto->code = 204;
+        $objeto->message = "No existe el post que se busca";
+        echo 'suprecionPost_RSP{'.json_encode(  $objeto ).'}';
+      }
       exit();
 	  }
     else {
